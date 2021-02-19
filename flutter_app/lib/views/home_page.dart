@@ -28,6 +28,21 @@ class _HomePageState extends State<HomePage> {
             return Container(
               height: 400,
               child: Center(
+                child: Card(
+                  color: Colors.blue,
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Image.asset('assets/images/img.jpg'),
+                        Text("Descriptions...........", style: TextStyle())
+                      ],
+                    ),
+                  ),
+                ),
               ),
             );
           },
