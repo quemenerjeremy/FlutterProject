@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_app/views/home_page.dart';
 
 // MasterPage gère le header le contenu qui y est affiché et la bottomBar pour la navigation
 
@@ -22,7 +22,7 @@ class _MasterPageState extends State<MasterPage> {
     FavoriteCategories(),
     FavoriteArtciles(),
     Profile()*/
-    Text("TopHeadlines"),
+    HomePage(),
     Text("FavoriteCategorie"),
     Text("FavoriteArticles"),
     Text("Profile")
