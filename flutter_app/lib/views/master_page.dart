@@ -78,7 +78,7 @@ class _MasterPageState extends State<MasterPage> {
         _leadingButton(),
         title: Text(
           _currentTitle,
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(fontSize: 25, color: Theme.of(context).accentColor),
         ),
       ),
       body: Row(
