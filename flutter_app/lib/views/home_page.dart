@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/views/page_details.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -26,14 +27,15 @@ class _HomePageState extends State<HomePage> {
           separatorBuilder: (BuildContext context, int index) => const Divider(),
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: 400,
+              height: 300,
               child: Center(
                 child: InkWell(
                   onTap: () {
                     print("Tap at index : ${index}");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PageDetails(id: index)));
                   },
                   child: Card(
-                    color: Colors.blue,
+                    color: Colors.white70,
                     child: Container(
                       width: 300,
                       height: 300,
@@ -42,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Image.asset('assets/images/img.jpg'),
-                          Text("Descriptions...........", style: TextStyle())
+                          Text("Article id : ${index}", style: TextStyle())
                         ],
                       ),
                     ),

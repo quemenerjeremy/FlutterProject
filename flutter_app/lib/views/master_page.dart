@@ -69,13 +69,7 @@ class _MasterPageState extends State<MasterPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: /*IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            onPressItem(0);
-          },
-        ),*/
-        _leadingButton(),
+        leading: _leadingButton(),
         title: Text(
           _currentTitle,
           style: TextStyle(fontSize: 25, color: Theme.of(context).accentColor),
