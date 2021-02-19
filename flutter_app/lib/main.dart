@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Views/MainView.dart';
-import 'Views/SecondaryView.dart';
+import 'package:flutter_app/views/master_page.dart';
 
 void main() {
   runApp(_MyApp());
@@ -16,11 +15,8 @@ class _MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder> {
         '/': (BuildContext context) {
-          return MainView();
+          return MasterPage();
         },
-        '/SecondaryView': (BuildContext context) {
-          return SecondaryView();
-        }
       },
     );
 
