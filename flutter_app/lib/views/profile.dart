@@ -1,6 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom_widgets/profile_card.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart' as syspaths;
 
 const UserName = "Jérémy Quemener";
 const Country = "France";
@@ -16,11 +21,12 @@ class ProfilPage extends StatefulWidget {
 
 class _ProfilPageState extends State<ProfilPage> {
 
-
   @override
   void initState() {
     super.initState();
   }
+
+  File _StoreImage;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +35,19 @@ class _ProfilPageState extends State<ProfilPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              radius: 100,
-              backgroundImage: AssetImage('assets/images/pictureProfile.jpg'),
+            Center(
+              child: CircleAvatar(
+                radius: 80,
+                child: _StoreImage == null ? Text("Picture") : null,
+                backgroundImage:
+                  _StoreImage != null ? FileImage(_StoreImage) : null,
+                ),
+            ),
+            TextButton(
+              child: Text('Upload photo'),
+              onPressed: () {
+                _showPickOptionsDialog(context);
+              },
             ),
             SizedBox(
               height: 20,
@@ -49,7 +65,7 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
             InfoCard(
                 text: Country,
-                icon: Icons.my_location,
+                icon: Icons.public,
                 onPressed: () {
                   print('location');
                 },
@@ -75,4 +91,47 @@ class _ProfilPageState extends State<ProfilPage> {
       )
     );
   }
+
+  Future<void> _loadPicker(ImageSource source) async {
+    final imageFile = await ImagePicker.pickImage(source: source);
+    if (imageFile == null) {
+      setState(() {
+        _StoreImage = imageFile;
+      });
+    }
+
+    final appDir = await syspaths.getApplicationDocumentsDirectory();
+    final fileName = path.basename(imageFile.path);
+    final savedImage = await imageFile.copy('${appDir.path}/$fileName');
+
+    Navigator.pop(context);
+
+  }
+
+  void _showPickOptionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              title: Text("Pick from Gallery"),
+              onTap: () {
+                _loadPicker(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              title: Text("Take a picture"),
+              onTap: () {
+                _loadPicker(ImageSource.camera);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
 }
+
