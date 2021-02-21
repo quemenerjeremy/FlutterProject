@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/custom_widgets/profile_card.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as syspaths;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../controllers/save_picture.dart';
 
 const UserName = "Jérémy Quemener";
 const Country = "France";
@@ -21,12 +21,43 @@ class ProfilPage extends StatefulWidget {
 
 class _ProfilPageState extends State<ProfilPage> {
 
+  Image image;
+
+  pickImage(ImageSource source) async {
+
+    final _pickImage = await ImagePicker.pickImage(source: source);
+
+    if (_pickImage != null) {
+      setState(() {
+        image = Image.file(_pickImage);
+      });
+      ImageSharedPrefs.saveImageToPrefs(
+          ImageSharedPrefs.base64String(_pickImage.readAsBytesSync()));
+    } else {
+      print('Error picking image');
+    }
+    print("pickImage");
+    print(image);
+  }
+
+  loadImageFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final imageKeyValue = prefs.getString(IMAGE_KEY);
+    if (imageKeyValue != null) {
+      final imageString = await ImageSharedPrefs.loadImageFromPrefs();
+      setState(() {
+        image = ImageSharedPrefs.imageFrom64BaseString(imageString);
+      });
+    }
+    print("loadimage");
+    print(image);
+  }
+
   @override
   void initState() {
     super.initState();
+    loadImageFromPrefs();
   }
-
-  File _StoreImage;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +69,19 @@ class _ProfilPageState extends State<ProfilPage> {
             Center(
               child: CircleAvatar(
                 radius: 80,
-                child: _StoreImage == null ? Text("Picture") : null,
+                child: image == null ? Text("Picture") : null,
                 backgroundImage:
-                  _StoreImage != null ? FileImage(_StoreImage) : null,
+                  image != null ? image.image : null,
                 ),
+            ),
+           IconButton(
+                icon: Icon(Icons.delete_forever),
+                onPressed: () {
+                  ImageSharedPrefs.emptyPrefs();
+                  setState(() {
+                    image = null;
+                  });
+                }
             ),
             TextButton(
               child: Text('Upload photo'),
@@ -84,29 +124,13 @@ class _ProfilPageState extends State<ProfilPage> {
                 print('favorite');
               },
             ),
-
-
           ],
         ),
       )
     );
   }
 
-  Future<void> _loadPicker(ImageSource source) async {
-    final imageFile = await ImagePicker.pickImage(source: source);
-    if (imageFile == null) {
-      setState(() {
-        _StoreImage = imageFile;
-      });
-    }
 
-    final appDir = await syspaths.getApplicationDocumentsDirectory();
-    final fileName = path.basename(imageFile.path);
-    final savedImage = await imageFile.copy('${appDir.path}/$fileName');
-
-    Navigator.pop(context);
-
-  }
 
   void _showPickOptionsDialog(BuildContext context) {
     showDialog(
@@ -118,13 +142,15 @@ class _ProfilPageState extends State<ProfilPage> {
             ListTile(
               title: Text("Pick from Gallery"),
               onTap: () {
-                _loadPicker(ImageSource.gallery);
+                pickImage(ImageSource.gallery);
+                Navigator.pop(context);
               },
             ),
             ListTile(
               title: Text("Take a picture"),
               onTap: () {
-                _loadPicker(ImageSource.camera);
+                pickImage(ImageSource.camera);
+                Navigator.pop(context);
               },
             )
           ],
