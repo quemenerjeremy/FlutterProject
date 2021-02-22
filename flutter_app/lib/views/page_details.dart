@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+// PageDetails is the page that the user will access to the artciles infos.
+
 class PageDetails extends StatefulWidget {
 
+  // Id is the index of the card that has been clicked. It comes as parameter of the PageDetails class.
   final int id;
 
   PageDetails({Key key, this.id}) : super(key: key);
@@ -17,6 +20,8 @@ class _PageDetailsState extends State<PageDetails> {
   void initState() {
     super.initState();
   }
+
+  // The class will just display a new Scaffold with the title of the selected article and it's id.
 
   @override
   Widget build(BuildContext context) {
