@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/home_page.dart';
 import 'package:flutter_app/views/categories_page.dart';
+import 'package:flutter_app/views/profile.dart';
 
 
 // MasterPage gère le header le contenu qui y est affiché et la bottomBar pour la navigation
@@ -27,7 +28,7 @@ class _MasterPageState extends State<MasterPage> {
     HomePage(),
     CategoriesPage(),
     Text("FavoriteArticles"),
-    Text("Profile")
+    ProfilPage()
   ];
 
   // onPressItem effectue des changements (ici le titre de la page) en fontion de la séléction de l'utilisateur sur la bottomBar
