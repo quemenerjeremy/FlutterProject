@@ -1,2 +1,5 @@
-
 .idea/
+flutter_app/pubspec.lock
+flutter_app/android/settings_aar.gradle
+flutter_app/pubspec.lock
+*.lock

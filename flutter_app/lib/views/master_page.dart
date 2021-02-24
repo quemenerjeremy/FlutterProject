@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/home_page.dart';
 import 'favorite_articles.dart';
+import 'package:flutter_app/views/categories_page.dart';
+import 'package:flutter_app/views/profile.dart';
 
 // MasterPage gère le header le contenu qui y est affiché et la bottomBar pour la navigation
 
@@ -23,10 +25,10 @@ class _MasterPageState extends State<MasterPage> {
     FavoriteCategories(),
     Profile()*/
     HomePage(),
-    Text("FavoriteCategorie"),
     FavoriteArtciles(),
-
-    Text("Profile")
+    CategoriesPage(),
+    Text("FavoriteArticles"),
+    ProfilPage()
   ];
 
   // onPressItem effectue des changements (ici le titre de la page) en fontion de la séléction de l'utilisateur sur la bottomBar
@@ -79,7 +81,7 @@ class _MasterPageState extends State<MasterPage> {
         _leadingButton(),
         title: Text(
           _currentTitle,
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(fontSize: 25, color: Theme.of(context).accentColor),
         ),
       ),
       body: Row(
