@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/master_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_app/views/page_details.dart';
 
 // Création de 2 themes light & dark
 
@@ -72,6 +73,9 @@ class NewsAppMvc extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) {
           return MasterPage();
+        },
+        '/PageDetails' : (BuildContext context) {
+          return PageDetails();
         }
       },
     );
