@@ -19,14 +19,10 @@ final darkTheme = ThemeData(
 );
 
 final lightTheme = ThemeData(
-    primarySwatch: Colors.grey,
-    primaryColor: Colors.white,
-    brightness: Brightness.light,
-    backgroundColor: const Color(0xFFE5E5E5),
-    appBarTheme: AppBarTheme(brightness: Brightness.light, color: Colors.white),
-    accentColor: Colors.cyan,
-    accentIconTheme: IconThemeData(color: Colors.grey),
-    dividerColor: Colors.white54
+  primaryColor: Colors.white,
+  brightness: Brightness.light,
+  backgroundColor: const Color(0xFFE5E5E5),
+  accentColor: Colors.cyan,
 );
 
 // Classe ThemeNotifier pour notifer l'app d'un changement de theme

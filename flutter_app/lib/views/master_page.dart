@@ -21,9 +21,6 @@ class _MasterPageState extends State<MasterPage> {
 
   // List of our content widgets to be able to display the content according to the user's choice on the bottomBar.
   List<Widget> _widgets = <Widget>[
-    /*HomePage(),
-    FavoriteCategories(),
-    Profile()*/
     HomePage(),
     CategoriesPage(),
     FavoriteArtciles(),
