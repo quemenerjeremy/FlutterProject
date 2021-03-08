@@ -64,10 +64,10 @@ class _FavoriteArtciles extends State<FavoriteArtciles> {
               height: 400,
               child: Center(
                   child: Card (
-                    color: Colors.lightBlueAccent,
+                    color: Colors.white54,
                     child: Container(
                       width: 380,
-                      height: 500,
+                      height: 600,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -76,7 +76,6 @@ class _FavoriteArtciles extends State<FavoriteArtciles> {
                           Text(
                               "Coronavirus France COVID19: Cases of coronavirus in France rise today",
                               style: TextStyle()),
-                          Icon(Icons.favorite, color: Colors.red, size: 30),
                           TextButton(
                             child: const Text('See more', style: TextStyle(fontSize: 30)),
                             onPressed: () {Navigator.push(
@@ -85,6 +84,20 @@ class _FavoriteArtciles extends State<FavoriteArtciles> {
                               );
                             },
                           ),
+                          Padding (
+                            padding: EdgeInsets.only(right: 300),
+                            child: Container(
+                              height: 50,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget> [
+                                  IconButton(
+                                      icon: Icon(Icons.favorite,color: Colors.red,),
+
+                                      onPressed: null)],),
+                            )
+                          )
                         ],
                       ),
                     ),
