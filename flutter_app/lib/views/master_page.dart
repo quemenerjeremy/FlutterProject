@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/home_page.dart';
+import 'favorite_articles.dart';
+import 'package:flutter_app/views/categories_page.dart';
+import 'package:flutter_app/views/profile.dart';
 
 // MasterPage manages the header, the content displayed and the bottomBar for navigation.
 
@@ -19,9 +22,9 @@ class _MasterPageState extends State<MasterPage> {
   // List of our content widgets to be able to display the content according to the user's choice on the bottomBar.
   List<Widget> _widgets = <Widget>[
     HomePage(),
-    Text("FavoriteCategorie"),
-    Text("FavoriteArticles"),
-    Text("Profile")
+    CategoriesPage(),
+    FavoriteArtciles(),
+    ProfilPage()
   ];
 
   // onPressItem makes changes (here the title of the page) according to the user's selection on the bottomBar.

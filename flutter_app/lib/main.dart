@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/views/master_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_app/views/page_details.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/models/controlTheme.dart';
 
 // Création de 2 themes light & dark
 
 final darkTheme = ThemeData(
   primaryColor: Colors.black,
+  primaryColorLight: Colors.grey,
+  primaryColorDark: Colors.blueGrey,
   brightness: Brightness.dark,
+  hintColor: Colors.blueGrey,
   backgroundColor: Colors.black,
-  accentColor: Colors.blueGrey,
-
+  accentColor: Colors.cyan,
+  dividerColor: Colors.white54
 );
 
 final lightTheme = ThemeData(
@@ -39,12 +44,24 @@ class ThemeNotifier with ChangeNotifier {
 
 // Main fonction de l'application
 
-void main() {
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  var darkTheme = prefs.getBool((SharedPreferencesTheme.DarkTheme));
+  ThemeData choiceTheme;
+
+  if(darkTheme != null) {
+    choiceTheme = darkTheme ? darkTheme : lightTheme;
+  } else {
+    choiceTheme = lightTheme;
+  }
+
+
   runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => ThemeNotifier(lightTheme),
+    create: (_) => ThemeNotifier(choiceTheme),
     child: NewsAppMvc(),
   )
   );
@@ -56,12 +73,12 @@ class NewsAppMvc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "News App MVC",
       // Selecteur de theme
-      theme: darkTheme,
+      theme: themeNotifier.getTheme() ,
       // Ouvre initialement la MasterPage qui gere le header le bottomBar et son contenu
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) {

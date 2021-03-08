@@ -21,7 +21,6 @@ class _ArticleCardState extends State<ArticleCard> {
   IconData _isFavorite;
   MaterialColor _isFilled;
 
-
   @override
   void initState() {
     super.initState();
