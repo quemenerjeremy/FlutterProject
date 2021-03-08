@@ -2,7 +2,7 @@
 
 class Articles {
 
-  final String title;
+  String title;
   String description;
   String content;
   final String url;

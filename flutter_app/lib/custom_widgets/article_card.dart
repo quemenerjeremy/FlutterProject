@@ -29,7 +29,15 @@ class _ArticleCardState extends State<ArticleCard> {
     if (widget.articles.urlToImage == null) {
       widget.articles.urlToImage = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png";
     }
-    print(widget.articles.urlToImage);
+    if (widget.articles.description == null) {
+      widget.articles.description = "No description for this article.";
+    }
+    if (widget.articles.title == null) {
+      widget.articles.title = "No title for this article.";
+    }
+    if (widget.articles.content == null) {
+      widget.articles.content = "No content for this article.";
+    }
   }
 
   @override
