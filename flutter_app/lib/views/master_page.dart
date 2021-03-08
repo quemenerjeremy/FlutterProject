@@ -25,8 +25,8 @@ class _MasterPageState extends State<MasterPage> {
     FavoriteCategories(),
     Profile()*/
     HomePage(),
-    FavoriteArtciles(),
     CategoriesPage(),
+    FavoriteArtciles(),
     ProfilPage()
   ];
 
