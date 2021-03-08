@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/views/page_details.dart';
+import 'package:flutter_app/custom_widgets/article_card.dart';
 import 'package:flutter_app/models/news.dart';
 import 'package:flutter_app/controllers/news_api_controller.dart';
 
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // We fetch the data when the widget is mounted.
-    //_fetchTopHeadlines();
+    _fetchTopHeadlines();
   }
 
   @override
@@ -38,38 +38,14 @@ class _HomePageState extends State<HomePage> {
       body: _isLoading ? Center(child: CircularProgressIndicator()) : Center(
         // ListView is a fake List that will show the way that we will display our news cards.
         child: ListView.separated(
-          itemCount: 10,
+          itemCount: _news.articles.length,
           separatorBuilder: (BuildContext context, int index) => const Divider(),
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: 300,
-              child: Center(
-                // InkWell is a widget that allows a click event on the child widget.
-                child: InkWell(
-                  onTap: () {
-                    // If a user click on the child of the InkWell widget the app will navigate to the PageDetails class at the specified index.
-                    print("Tap at index : ${index}");
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PageDetails(id: index)));
-                  },
-                  child: Card(
-                    color: Colors.white70,
-                    child: Container(
-                      width: 300,
-                      height: 300,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Image.asset('assets/images/img.jpg'),
-                          Text("Article id : ${index}", style: TextStyle())
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              height: 500,
+              child: Center(child: ArticleCard(articles: _news.articles[index], index: index))
             );
-          },
+          }
         ),
       ),
     );
