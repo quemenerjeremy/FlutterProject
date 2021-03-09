@@ -8,14 +8,14 @@ import 'package:flutter_app/models/controlTheme.dart';
 // Création de 2 themes light & dark
 
 final darkTheme = ThemeData(
-  primaryColor: Colors.black,
-  primaryColorLight: Colors.grey,
-  primaryColorDark: Colors.blueGrey,
-  brightness: Brightness.dark,
-  hintColor: Colors.blueGrey,
-  backgroundColor: Colors.black,
-  accentColor: Colors.cyan,
-  dividerColor: Colors.white54
+    primaryColor: Colors.black,
+    primaryColorLight: Colors.grey,
+    primaryColorDark: Colors.blueGrey,
+    brightness: Brightness.dark,
+    hintColor: Colors.blueGrey,
+    backgroundColor: Colors.black,
+    accentColor: Colors.cyan,
+    dividerColor: Colors.white54
 );
 
 final lightTheme = ThemeData(
@@ -59,7 +59,6 @@ Future<void> main() async {
     choiceTheme = lightTheme;
   }
 
-
   runApp(ChangeNotifierProvider<ThemeNotifier>(
     create: (_) => ThemeNotifier(choiceTheme),
     child: NewsAppMvc(),
@@ -78,7 +77,7 @@ class NewsAppMvc extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "News App MVC",
       // Selecteur de theme
-      theme: themeNotifier.getTheme() ,
+      theme: themeNotifier.getTheme(),
       // Ouvre initialement la MasterPage qui gere le header le bottomBar et son contenu
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) {
