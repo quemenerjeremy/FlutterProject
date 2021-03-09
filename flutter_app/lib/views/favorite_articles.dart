@@ -1,113 +1,75 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom_widgets/article_card.dart';
+import 'package:flutter_app/models/news.dart';
+import 'package:flutter_app/controllers/news_api_controller.dart';
 
 class FavoriteArtciles extends StatefulWidget {
-
   @override
   _FavoriteArtciles createState() => _FavoriteArtciles();
-
 }
 
-class Article extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Favorite articles"),
-      ),
-      body: Center(
-            child: Container(
-              child: Center(
-                child: Card (
-                  color: Colors.lightBlueAccent,
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Text(
-                            "Coronavirus France COVID19: Cases of coronavirus in France rise today",
-                            style: TextStyle(fontSize: 30)),
-                        Image.asset('assets/images/img.jpg'),
-                        Text(
-                            "There have been at least 3,560,700 confirmed cases of coronavirus in France, according to the French government. As of Sunday morning, 83,964 people had died. "
-                                "National health authorities in France do not provide cumulative regional data for test-confirmed cases of the virus; only daily snapshots are reported. "
-                                "They do, however, report regional data for the total number of people hospitalized for Covid-19 and how many of those people have recovered or died. ",
-                            style: TextStyle( fontSize: 20)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-      ),
-    );
-  }
-}
 class _FavoriteArtciles extends State<FavoriteArtciles> {
+
+  bool _isLoading = false;
+
+  News _news;
+
+  NewsApiController _apiController = NewsApiController();
+
   @override
   void initState() {
     super.initState();
+    _fetchFavContent();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      // If the loading is finished we display the List of our news widgets. Otherwise we will display a loading icon.
+      body: _isLoading ? Center(child: CircularProgressIndicator()) : Center(
+        // ListView is a fake List that will show the way that we will display our news cards.
         child: ListView.separated(
-          itemCount: 2,
-          separatorBuilder: (BuildContext context,
-              int index) => const Divider(),
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              height: 400,
-              child: Center(
-                  child: Card (
-                    color: Colors.white54,
-                    child: Container(
-                      width: 380,
-                      height: 600,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Image.asset('assets/images/img.jpg'),
-                          Text(
-                              "Coronavirus France COVID19: Cases of coronavirus in France rise today",
-                              style: TextStyle()),
-                          TextButton(
-                            child: const Text('See more', style: TextStyle(fontSize: 30)),
-                            onPressed: () {Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => Article()),
-                              );
-                            },
-                          ),
-                          Padding (
-                            padding: EdgeInsets.only(right: 300),
-                            child: Container(
-                              height: 50,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget> [
-                                  IconButton(
-                                      icon: Icon(Icons.favorite,color: Colors.red,),
-
-                                      onPressed: null)],),
-                            )
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-              ),
-            );
-          },
+            itemCount: _news.articles.length,
+            separatorBuilder: (BuildContext context, int index) => const Divider(),
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  height: 500,
+                  child: Center(child: ArticleCard(articles: _news.articles[index], index: index))
+              );
+            }
         ),
       ),
     );
+  }
+
+  _fetchFavContent() async {
+    // We setup the loading during the request.
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Then we try to get the Api datas
+    try {
+      // Making the request and save it in a temporary variable
+      var news = await _apiController.getTopHeadlines();
+
+      // Then we set the state of our News class instance with the api datas.
+      setState(() {
+        _news = news;
+      });
+    } catch(err) {
+      // Error managing here.
+      setState(() {
+        _news = null;
+      });
+    } finally {
+      // Finally we stop the loading icon.
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
   }
 }
 
