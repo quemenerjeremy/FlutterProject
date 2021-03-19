@@ -28,7 +28,6 @@ final lightTheme = ThemeData(
 // Classe ThemeNotifier pour notifer l'app d'un changement de theme
 
 class ThemeNotifier with ChangeNotifier {
-
   ThemeData _themeData;
 
   ThemeNotifier(this._themeData);
@@ -39,7 +38,6 @@ class ThemeNotifier with ChangeNotifier {
     _themeData = themeData;
     notifyListeners();
   }
-
 }
 
 // Main fonction de l'application
@@ -50,17 +48,16 @@ Future<void> main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  var darkTheme = prefs.getBool((SharedPreferencesTheme.DarkTheme));
-  ThemeData choiceTheme;
-
-  if(darkTheme != null) {
-    choiceTheme = darkTheme ? darkTheme : lightTheme;
+  var isDarkTheme = prefs.getBool((SharedPreferencesTheme.DarkTheme));
+  ThemeData theme;
+  if(isDarkTheme != null) {
+    theme = isDarkTheme ? darkTheme : lightTheme;
   } else {
-    choiceTheme = lightTheme;
+    theme = lightTheme;
   }
 
   runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => ThemeNotifier(choiceTheme),
+    create: (_) => ThemeNotifier(theme),
     child: NewsAppMvc(),
   )
   );
