@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class InfoCard extends StatelessWidget {
   final String text;
+  final String hideText;
   final IconData icon;
   Function onPressed;
 
   InfoCard({
     @required this.text,
+    this.hideText,
     @required this.icon,
     this.onPressed,
   });
@@ -23,8 +25,11 @@ class InfoCard extends StatelessWidget {
             icon,
             color: Colors.cyan,
           ),
-          title: Text(
-            text,
+          title: TextField(
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hideText
+            ),
           ),
         ),
       ),

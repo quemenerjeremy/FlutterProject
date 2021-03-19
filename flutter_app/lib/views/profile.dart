@@ -1,16 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/custom_widgets/profile_card.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/save_picture.dart';
-
-const UserName = "Jérémy Quemener";
-const Country = "France";
-const DarkMode = "Off";
-const FavoriteCategorie = "FavoriteCategorie";
+import 'package:flutter_app/views/FavCategorie.dart';
+import 'package:flutter_app/views/choiceCountry.dart';
+import 'package:flutter_app/custom_widgets/SwitchAppTheme.dart';
 
 class ProfilPage extends StatefulWidget {
 
@@ -24,7 +20,6 @@ class _ProfilPageState extends State<ProfilPage> {
   Image image;
 
   pickImage(ImageSource source) async {
-
     final _pickImage = await ImagePicker.pickImage(source: source);
 
     if (_pickImage != null) {
@@ -62,41 +57,152 @@ class _ProfilPageState extends State<ProfilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: CircleAvatar(
-                radius: 80,
-                child: image == null ? Text("Picture") : null,
-                backgroundImage:
-                  image != null ? image.image : null,
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 80,
+                      child: image == null ? Text("Picture") : null,
+                      backgroundImage:
+                      image != null ? image.image : null,
+                    ),
+                  ),
                 ),
+                IconButton(
+                    icon: Icon(Icons.delete_forever),
+                    onPressed: () {
+                      ImageSharedPrefs.emptyPrefs();
+                      setState(() {
+                        image = null;
+                      });
+                    }
+                ),
+                TextButton(
+                  child: Text('Upload photo'),
+                  onPressed: () {
+                    _showPickOptionsDialog(context);
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                  width: 200,
+                  child: Divider(
+                    color: Colors.grey,
+                  ),
+                ),
+                Card(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.account_circle,
+                      color: Colors.cyan,
+                    ),
+                    title: TextField(
+                      style: TextStyle(color: Theme.of(context).primaryColorDark),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Username",
+                        hintStyle: TextStyle(color: Theme.of(context).primaryColorDark)
+                      ),
+                    ),
+                  ),
+                ),
+                Card(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.public,
+                      color: Colors.cyan,
+                    ),
+                    title: Text(
+                        "Country", style: TextStyle(color:Theme.of(context).primaryColorDark)
+                    ),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => choiceCountry()));
+                    },
+                  ),
+                ),
+                Card(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.brightness_6,
+                      color: Colors.cyan,
+                    ),
+                    title: Text(
+                        "Dark Mode", style: TextStyle(color:Theme.of(context).primaryColorDark)
+                    ),
+                    trailing: ThemeSwitch()
+                  ),
+                ),
+                Card(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.brightness_6,
+                      color: Colors.cyan,
+                    ),
+                    title: Text(
+                        "Favorite Article", style: TextStyle(color:Theme.of(context).primaryColorDark)
+                    ),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => FavCategories()));
+                    },
+                  ),
+                ),
+              ],
             ),
-           IconButton(
-                icon: Icon(Icons.delete_forever),
-                onPressed: () {
-                  ImageSharedPrefs.emptyPrefs();
-                  setState(() {
-                    image = null;
-                  });
-                }
+          ),
+        )
+    );
+  }
+
+
+  void _showPickOptionsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Text("Pick from Gallery"),
+                  onTap: () {
+                    pickImage(ImageSource.gallery);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text("Take a picture"),
+                  onTap: () {
+                    pickImage(ImageSource.camera);
+                    Navigator.pop(context);
+                  },
+                )
+              ],
             ),
-            TextButton(
-              child: Text('Upload photo'),
-              onPressed: () {
-                _showPickOptionsDialog(context);
-              },
-            ),
-            SizedBox(
-              height: 20,
-              width: 200,
-              child: Divider(
-                color: Colors.grey,
-              ),
-            ),
-            InfoCard(
+          ),
+    );
+  }
+}
+/*    InfoCard(
+                hideText: "Username",
                 text: UserName,
                 icon: Icons.account_circle,
                 onPressed: () {
@@ -121,43 +227,5 @@ class _ProfilPageState extends State<ProfilPage> {
               text: FavoriteCategorie,
               icon: Icons.favorite,
               onPressed: () {
-                print('favorite');
-              },
-            ),
-          ],
-        ),
-      )
-    );
-  }
-
-
-
-  void _showPickOptionsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              title: Text("Pick from Gallery"),
-              onTap: () {
-                pickImage(ImageSource.gallery);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text("Take a picture"),
-              onTap: () {
-                pickImage(ImageSource.camera);
-                Navigator.pop(context);
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-}
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FavCategories()));
+              },*/

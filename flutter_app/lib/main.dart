@@ -1,35 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/master_page.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_app/views/page_details.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/models/controlTheme.dart';
 
 // Création de 2 themes light & dark
 
 final darkTheme = ThemeData(
-    primarySwatch: Colors.grey,
     primaryColor: Colors.black,
+    primaryColorLight: Colors.grey,
+    primaryColorDark: Colors.blueGrey,
     brightness: Brightness.dark,
-    backgroundColor: const Color(0xFF212121),
-    appBarTheme: AppBarTheme(brightness: Brightness.dark, color: Colors.orange),
-    accentColor: Colors.orange,
-    accentIconTheme: IconThemeData(color: Colors.black),
-    dividerColor: Colors.black12
+    hintColor: Colors.blueGrey,
+    backgroundColor: Colors.black,
+    accentColor: Colors.cyan,
+    dividerColor: Colors.white54
 );
 
 final lightTheme = ThemeData(
-    primarySwatch: Colors.grey,
-    primaryColor: Colors.white,
-    brightness: Brightness.light,
-    backgroundColor: const Color(0xFFE5E5E5),
-    appBarTheme: AppBarTheme(brightness: Brightness.light, color: Colors.white),
-    accentColor: Colors.cyan,
-    accentIconTheme: IconThemeData(color: Colors.grey),
-    dividerColor: Colors.white54
+  primaryColor: Colors.white,
+  brightness: Brightness.light,
+  backgroundColor: const Color(0xFFE5E5E5),
+  accentColor: Colors.cyan,
 );
 
 // Classe ThemeNotifier pour notifer l'app d'un changement de theme
 
 class ThemeNotifier with ChangeNotifier {
-
   ThemeData _themeData;
 
   ThemeNotifier(this._themeData);
@@ -40,17 +38,26 @@ class ThemeNotifier with ChangeNotifier {
     _themeData = themeData;
     notifyListeners();
   }
-
 }
 
 // Main fonction de l'application
 
-void main() {
+Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  var isDarkTheme = prefs.getBool((SharedPreferencesTheme.DarkTheme));
+  ThemeData theme;
+  if(isDarkTheme != null) {
+    theme = isDarkTheme ? darkTheme : lightTheme;
+  } else {
+    theme = lightTheme;
+  }
+
   runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => ThemeNotifier(lightTheme),
+    create: (_) => ThemeNotifier(theme),
     child: NewsAppMvc(),
   )
   );
@@ -62,16 +69,19 @@ class NewsAppMvc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "News App MVC",
       // Selecteur de theme
-      theme: lightTheme,
+      theme: themeNotifier.getTheme(),
       // Ouvre initialement la MasterPage qui gere le header le bottomBar et son contenu
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) {
           return MasterPage();
+        },
+        '/PageDetails' : (BuildContext context) {
+          return PageDetails();
         }
       },
     );
