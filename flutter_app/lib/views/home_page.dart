@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
     } catch(err) {
       setState(() {
         _user = UserData();
-        _user.choiceTopic = [true,true,true,true,true,true,true];
+        _user.selectTopic = [true,true,true,true,true,true,true];
         _user.listTopics = ["Business", "Entertainement", "General", "Health", "Science", "Sports", "Technology"];
       });
       await SharedPrefUser().saveUser(_user);

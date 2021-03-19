@@ -6,8 +6,8 @@ import 'package:flutter_app/models/sharedUserData.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/save_picture.dart';
-import 'package:flutter_app/views/FavCategorie.dart';
-import 'package:flutter_app/views/choiceCountry.dart';
+import 'package:flutter_app/views/SelectFavCategorie.dart';
+import 'package:flutter_app/views/selectCountry.dart';
 import 'package:flutter_app/custom_widgets/SwitchAppTheme.dart';
 import 'package:flutter_app/models/userData.dart';
 
@@ -155,7 +155,15 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => choiceCountry()));
+                          builder: (context) => choiceCountry(country: _user.country)))
+                      .then((value) async {
+                        if (value != null) {
+                          setState(() {
+                            _user.country = value;
+                          });
+                        }
+                        await SharedPrefUser().saveUser(_user);
+                      });
                     },
                   ),
                 ),
@@ -180,7 +188,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       vertical: 10.0, horizontal: 25.0),
                   child: ListTile(
                     leading: Icon(
-                      Icons.brightness_6,
+                      Icons.favorite_border,
                       color: Colors.cyan,
                     ),
                     title: Text(
@@ -188,8 +196,16 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FavCategories()));
-                    },
+                          builder: (context) => FavCategories(check: _user.selectTopic, listTopics: _user.listTopics,))).then((value) async {
+                            if (value != null) {
+                              setState(() {
+                                _user.selectTopic = value["boolTab"];
+                                _user.listTopics = value["stringTab"];
+                              });
+                              await SharedPrefUser().saveUser(_user);
+                            }
+                          });
+                      },
                   ),
                 ),
               ],
