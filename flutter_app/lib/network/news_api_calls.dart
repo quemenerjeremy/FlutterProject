@@ -18,7 +18,7 @@ class NewsApiCalls {
 
     if (response.statusCode != HttpStatus.ok) throw Exception(response.body);
 
-    log('Network = ${response.body}');
+    //log('Network = ${response.body}');
 
     // We return the response body after checking if an error occured.
     return response.body;
