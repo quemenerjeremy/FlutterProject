@@ -3,14 +3,14 @@ class UserData {
   String username;
   String country;
   List<String> listTopics;
-  List<bool> choiceTopic;
+  List<bool> selectTopic;
 
   UserData(
             {
               this.username = "Username",
               this.country = "fr",
               this.listTopics,
-              this.choiceTopic
+              this.selectTopic
             });
 
   factory UserData.fromJson(Map<String, dynamic> json) {
@@ -18,14 +18,14 @@ class UserData {
       username: json["username"] ?? "username",
       country: json["country"] ?? "fr",
       listTopics: json["listTopics"].cast<String>(),
-      choiceTopic: json["choiceTopic"].cast<bool>(),
+      selectTopic: json["selectTopic"].cast<bool>(),
     );
   }
   Map<String, dynamic> toJson() => {
     "username": username,
     "country": country,
     "listTopics":  listTopics,
-    "choiceTopic": choiceTopic
+    "selectTopic": selectTopic
 
   };
 }
