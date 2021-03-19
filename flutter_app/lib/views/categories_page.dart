@@ -13,7 +13,7 @@ class CategoriesPage extends StatefulWidget {
 class _CategoriesPageState extends State<CategoriesPage> {
 
   bool _isLoading = false;
-
+  List<String> strArr = ["Latest", "France", "World", "Latest", "Technology", "Entertainement"];
   News _news;
 
   NewsApiController _apiController = NewsApiController();
@@ -28,21 +28,17 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
 
     return DefaultTabController(
-        length: 6,
+        length: strArr.length,
         child: Scaffold(
           appBar: TabBar(
             isScrollable: true,
             unselectedLabelColor: Colors.grey,
-            //indicatorColor: Colors.white,
-              tabs: [
-                Tab(text: "Latest"),
-                Tab(text: "France"),
-                Tab(text: "World"),
-                Tab(text: "Latest"),
-                Tab(text: "Technology"),
-                Tab(text: "Entertainement")
+            tabs: [
+                for (var tabText in strArr)
+                  Tab(text: tabText)
               ]
           ),
+
           body: _isLoading ? Center(child: CircularProgressIndicator()) : ListView.separated(
               itemCount: _news.articles.length,
               separatorBuilder: (BuildContext context, int index) => const Divider(),
