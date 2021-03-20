@@ -1,12 +1,15 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/custom_widgets/usernameDialog.dart';
+import 'package:flutter_app/models/sharedUserData.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/save_picture.dart';
-import 'package:flutter_app/views/FavCategorie.dart';
-import 'package:flutter_app/views/choiceCountry.dart';
+import 'package:flutter_app/views/SelectFavCategorie.dart';
+import 'package:flutter_app/views/selectCountry.dart';
 import 'package:flutter_app/custom_widgets/SwitchAppTheme.dart';
+import 'package:flutter_app/models/userData.dart';
 
 class ProfilPage extends StatefulWidget {
 
@@ -16,7 +19,8 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-
+  UserData _user;
+  bool _isLoading = false;
   Image image;
 
   pickImage(ImageSource source) async {
@@ -31,8 +35,6 @@ class _ProfilPageState extends State<ProfilPage> {
     } else {
       print('Error picking image');
     }
-    print("pickImage");
-    print(image);
   }
 
   loadImageFromPrefs() async {
@@ -44,21 +46,43 @@ class _ProfilPageState extends State<ProfilPage> {
         image = ImageSharedPrefs.imageFrom64BaseString(imageString);
       });
     }
-    print("loadimage");
-    print(image);
   }
 
   @override
   void initState() {
     super.initState();
+    _setUserInfos();
     loadImageFromPrefs();
+  }
+
+  _setUserInfos() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      var isUserExist = UserData.fromJson(await SharedPrefUser().getUser());
+      if (isUserExist != null) {
+        setState(() {
+          _user = isUserExist;
+        });
+      }
+    } catch(err) {
+      setState(() {
+        print(err);
+        _user = UserData();
+      });
+    }finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-          child: SafeArea(
+          child: _isLoading ? Padding(padding: EdgeInsets.only(top: 300), child: Center(child: CircularProgressIndicator())) : SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -73,20 +97,24 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                   ),
                 ),
-                IconButton(
-                    icon: Icon(Icons.delete_forever),
-                    onPressed: () {
-                      ImageSharedPrefs.emptyPrefs();
-                      setState(() {
-                        image = null;
-                      });
-                    }
-                ),
-                TextButton(
-                  child: Text('Upload photo'),
-                  onPressed: () {
-                    _showPickOptionsDialog(context);
-                  },
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        child: Text('Upload photo'),
+                        onPressed: () {
+                          _showPickOptionsDialog(context);
+                        },
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.delete_forever),
+                          onPressed: () {
+                            ImageSharedPrefs.emptyPrefs();
+                            setState(() {
+                              image = null;
+                            });
+                          }),
+                    ]
                 ),
                 SizedBox(
                   height: 20,
@@ -104,14 +132,17 @@ class _ProfilPageState extends State<ProfilPage> {
                       Icons.account_circle,
                       color: Colors.cyan,
                     ),
-                    title: TextField(
-                      style: TextStyle(color: Theme.of(context).primaryColorDark),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Username",
-                        hintStyle: TextStyle(color: Theme.of(context).primaryColorDark)
-                      ),
-                    ),
+                    title: Text("${_user.username}",  style: TextStyle(color: Theme.of(context).primaryColorDark)),
+                    onTap: () {
+                      usernameDialog(context).then((value) async {
+                        if (value != null) {
+                          setState(() {
+                            _user.username = value;
+                          });
+                          await SharedPrefUser().saveUser(_user);
+                        }
+                      });
+                    },
                   ),
                 ),
                 Card(
@@ -128,7 +159,15 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => choiceCountry()));
+                          builder: (context) => choiceCountry(country: _user.country)))
+                      .then((value) async {
+                        if (value != null) {
+                          setState(() {
+                            _user.country = value;
+                          });
+                        }
+                        await SharedPrefUser().saveUser(_user);
+                      });
                     },
                   ),
                 ),
@@ -153,7 +192,7 @@ class _ProfilPageState extends State<ProfilPage> {
                       vertical: 10.0, horizontal: 25.0),
                   child: ListTile(
                     leading: Icon(
-                      Icons.brightness_6,
+                      Icons.favorite_border,
                       color: Colors.cyan,
                     ),
                     title: Text(
@@ -161,8 +200,16 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FavCategories()));
-                    },
+                          builder: (context) => FavCategories(check: _user.selectTopic, listTopics: _user.listTopics,))).then((value) async {
+                            if (value != null) {
+                              setState(() {
+                                _user.selectTopic = value["boolTab"];
+                                _user.listTopics = value["stringTab"];
+                              });
+                              await SharedPrefUser().saveUser(_user);
+                            }
+                          });
+                      },
                   ),
                 ),
               ],
@@ -201,31 +248,3 @@ class _ProfilPageState extends State<ProfilPage> {
     );
   }
 }
-/*    InfoCard(
-                hideText: "Username",
-                text: UserName,
-                icon: Icons.account_circle,
-                onPressed: () {
-                  print('username');
-                },
-            ),
-            InfoCard(
-                text: Country,
-                icon: Icons.public,
-                onPressed: () {
-                  print('location');
-                },
-            ),
-            InfoCard(
-                text: DarkMode,
-                icon: Icons.nightlight_round,
-                onPressed: () {
-                  print('dark');
-                  },
-            ),
-            InfoCard(
-              text: FavoriteCategorie,
-              icon: Icons.favorite,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FavCategories()));
-              },*/

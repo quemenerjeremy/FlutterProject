@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/custom_widgets/article_card.dart';
+import 'package:flutter_app/models/UserData.dart';
 import 'package:flutter_app/models/news.dart';
 import 'package:flutter_app/controllers/news_api_controller.dart';
+import 'package:flutter_app/models/sharedUserData.dart';
 
 // HomePage StatefulWidget that will display byr default the Top headlines of the moment.
 
@@ -19,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   // _news will be the class instance of News and it will store the data of the Api to be displayed.
   News _news;
-
+  UserData _user;
   // _api is the instance of NewsApiController class. It will allows to the view to communicate with the controller,
   // and then perform api calls.
   NewsApiController _api = NewsApiController();
@@ -28,7 +30,35 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // We fetch the data when the widget is mounted.
-    _fetchTopHeadlines();
+    _setupPageResults();
+  }
+
+  _setupPageResults() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      var isUserExist = UserData.fromJson(await SharedPrefUser().getUser());
+      if (isUserExist != null) {
+        setState(() {
+          _user = isUserExist;
+          print("_user");
+        });
+      }
+      await _fetchTopHeadlines();
+    } catch(err) {
+      setState(() {
+        _user = UserData();
+        _user.selectTopic = [true,true,true,true,true,true,true];
+        _user.listTopics = ["Business", "Entertainement", "General", "Health", "Science", "Sports", "Technology"];
+      });
+      await SharedPrefUser().saveUser(_user);
+      await _fetchTopHeadlines();
+    }finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
