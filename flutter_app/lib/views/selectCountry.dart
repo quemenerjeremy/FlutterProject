@@ -10,7 +10,6 @@ class choiceCountry extends StatefulWidget {
 
   @override
   _choiceCountryState createState() => _choiceCountryState();
-
 }
 
 class _choiceCountryState extends State<choiceCountry> {
@@ -36,18 +35,6 @@ class _choiceCountryState extends State<choiceCountry> {
         mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RadioListTile(
-                title: const Text("United Kingdom"),
-                value: CountryList.gb,
-                groupValue: _countryList,
-                onChanged: (CountryList value) {setState(() {_countryList = value;});}
-            ),
-            RadioListTile(
-                title: const Text("United States"),
-                value: CountryList.us,
-                groupValue: _countryList,
-                onChanged: (CountryList value) {setState(() {_countryList = value;});}
-            ),
-            RadioListTile(
                 title: const Text("France"),
                 value: CountryList.fr,
                 groupValue: _countryList,
@@ -65,25 +52,30 @@ class _choiceCountryState extends State<choiceCountry> {
                 groupValue: _countryList,
                 onChanged: (CountryList value) {setState(() {_countryList = value;});}
             ),
+            RadioListTile(
+                title: const Text("United Kingdom"),
+                value: CountryList.gb,
+                groupValue: _countryList,
+                onChanged: (CountryList value) {setState(() {_countryList = value;});}
+            ),
+            RadioListTile(
+                title: const Text("United States"),
+                value: CountryList.us,
+                groupValue: _countryList,
+                onChanged: (CountryList value) {setState(() {_countryList = value;});}
+            ),
+            SizedBox(
+              height: 20,
+              width: 200,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: OutlinedButton.icon(
-                    icon: Icon(Icons.cancel_outlined),
-                    label: Text("cancel"),
-                    onPressed: () { Navigator.pop(context); },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: OutlinedButton.icon(
-                    label: Text("Submit"),
-                    icon: Icon(Icons.done),
+               OutlinedButton.icon(
+                    label: Text("Submit", style: TextStyle(color:Theme.of(context).accentColor)),
+                    icon: Icon(Icons.done, color: Colors.greenAccent),
                     onPressed: () {Navigator.pop(context, _countryList.toString().split('.').last);},
                   ),
-                ),
               ],
             )
           ]
@@ -93,13 +85,6 @@ class _choiceCountryState extends State<choiceCountry> {
 
   _countryChange() {
     switch (widget.country) {
-
-      case "gb":
-        _countryList = CountryList.gb;
-        break;
-      case "us":
-        _countryList = CountryList.us;
-        break;
       case "fr":
         _countryList = CountryList.fr;
         break;
@@ -108,6 +93,12 @@ class _choiceCountryState extends State<choiceCountry> {
         break;
       case "de":
         _countryList = CountryList.de;
+        break;
+      case "gb":
+        _countryList = CountryList.gb;
+        break;
+      case "us":
+        _countryList = CountryList.us;
         break;
     }
     setState(() {});

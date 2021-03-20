@@ -97,20 +97,24 @@ class _ProfilPageState extends State<ProfilPage> {
                     ),
                   ),
                 ),
-                IconButton(
-                    icon: Icon(Icons.delete_forever),
-                    onPressed: () {
-                      ImageSharedPrefs.emptyPrefs();
-                      setState(() {
-                        image = null;
-                      });
-                    }
-                ),
-                TextButton(
-                  child: Text('Upload photo'),
-                  onPressed: () {
-                    _showPickOptionsDialog(context);
-                  },
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        child: Text('Upload photo'),
+                        onPressed: () {
+                          _showPickOptionsDialog(context);
+                        },
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.delete_forever),
+                          onPressed: () {
+                            ImageSharedPrefs.emptyPrefs();
+                            setState(() {
+                              image = null;
+                            });
+                          }),
+                    ]
                 ),
                 SizedBox(
                   height: 20,

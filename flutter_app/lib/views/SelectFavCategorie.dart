@@ -36,15 +36,7 @@ class _FavCategoriesState extends State<FavCategories> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme
-              .of(context)
-              .accentColor),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text("Select topics", style: TextStyle(fontSize: 20, color: Theme
+        title: Text("Favorite Category", style: TextStyle(fontSize: 20, color: Theme
             .of(context)
             .accentColor)),
         actions: [
@@ -53,7 +45,16 @@ class _FavCategoriesState extends State<FavCategories> {
                 Navigator.pop(
                     context, {"boolTab": check, "stringTab": chooseTopic});
               },
-              child: const Text("Submit")
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.done, color: Theme.of(context).accentColor),
+                    ),
+                    Text("Submit", style: TextStyle(color:Theme.of(context).accentColor))
+                  ]
+              )
           ),
         ],
       ),
@@ -78,8 +79,7 @@ class _FavCategoriesState extends State<FavCategories> {
                                   chooseTopic.remove(categoryTitles[index]);
                                 check[index] = value;
                               });
-                            }
-                        )
+                            })
                       ],
                     ),
                   ),
