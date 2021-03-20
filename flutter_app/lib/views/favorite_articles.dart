@@ -1,75 +1,64 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/custom_widgets/article_card.dart';
-import 'package:flutter_app/models/news.dart';
 import 'package:flutter_app/controllers/news_api_controller.dart';
+import 'package:flutter_app/models/sharedUserData.dart';
+import 'package:flutter_app/models/news.dart';
+import 'package:flutter_app/custom_widgets/article_card.dart';
+import 'package:flutter_app/models/user.dart';
 
-class FavoriteArtciles extends StatefulWidget {
+class FavoriteArticles extends StatefulWidget {
+
   @override
-  _FavoriteArtciles createState() => _FavoriteArtciles();
+  _FavoriteArticlesState createState() => _FavoriteArticlesState();
+
 }
 
-class _FavoriteArtciles extends State<FavoriteArtciles> {
-
-  bool _isLoading = false;
-
+class _FavoriteArticlesState extends State<FavoriteArticles> {
   News _news;
-
-  NewsApiController _apiController = NewsApiController();
+  bool _isLoading = false;
+  NewsApiController _api = NewsApiController();
+  User _user;
 
   @override
   void initState() {
     super.initState();
-    _fetchFavContent();
+    _setupPageResults();
+  }
+
+  _setupPageResults() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      var isUserExist = User.fromJson(await SharedPrefUser().getUser());
+      if (isUserExist != null) {
+        setState(() {_user = isUserExist;});
+      }
+    } catch(err) {
+      print("Error !");
+    }finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // If the loading is finished we display the List of our news widgets. Otherwise we will display a loading icon.
       body: _isLoading ? Center(child: CircularProgressIndicator()) : Center(
-        // ListView is a fake List that will show the way that we will display our news cards.
         child: ListView.separated(
-            itemCount: _news.articles.length,
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  height: 500,
-                  child: Center(child: ArticleCard(articles: _news.articles[index], index: index))
-              );
-            }
+          itemCount: _user.favArticles.length,
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+                height: 500,
+                child: Center(child: ArticleCard(articles: _user.favArticles[index], index: index, user: _user))
+            );
+          },
         ),
       ),
     );
   }
 
-  _fetchFavContent() async {
-    // We setup the loading during the request.
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Then we try to get the Api datas
-    try {
-      // Making the request and save it in a temporary variable
-      var news = await _apiController.getTopHeadlines();
-
-      // Then we set the state of our News class instance with the api datas.
-      setState(() {
-        _news = news;
-      });
-    } catch(err) {
-      // Error managing here.
-      setState(() {
-        _news = null;
-      });
-    } finally {
-      // Finally we stop the loading icon.
-      setState(() {
-        _isLoading = false;
-      });
-    }
-
-  }
 }
-

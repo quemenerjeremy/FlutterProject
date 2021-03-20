@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/controllers/news_api_controller.dart';
+import 'package:flutter_app/models/sharedUserData.dart';
 import 'package:flutter_app/custom_widgets/article_card.dart';
 import 'package:flutter_app/models/news.dart';
+import 'package:flutter_app/models/user.dart';
 
 class CategoriesPage extends StatefulWidget {
 
@@ -12,80 +14,128 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
 
+  User _user;
   bool _isLoading = false;
-
+  int _isSelected = 0;
+  String _categorySelected;
   News _news;
-
-  NewsApiController _apiController = NewsApiController();
+  NewsApiController _api = NewsApiController();
 
   @override
   void initState() {
     super.initState();
-    _fetchFavContent();
+    _setupPageResults();
   }
 
-  @override
-  Widget build(BuildContext context) {
-
-    return DefaultTabController(
-        length: 6,
-        child: Scaffold(
-          appBar: TabBar(
-            isScrollable: true,
-            unselectedLabelColor: Colors.grey,
-            //indicatorColor: Colors.white,
-              tabs: [
-                Tab(text: "Latest"),
-                Tab(text: "France"),
-                Tab(text: "World"),
-                Tab(text: "Latest"),
-                Tab(text: "Technology"),
-                Tab(text: "Entertainement")
-              ]
-          ),
-          body: _isLoading ? Center(child: CircularProgressIndicator()) : ListView.separated(
-              itemCount: _news.articles.length,
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 500,
-                  child: Center(
-                    child: ArticleCard(articles: _news.articles[index], index: index)
-                  ),
-                );
-              },
-          )
-        )
-    );
-  }
-
-  _fetchFavContent() async {
-    // We setup the loading during the request.
+  _setupPageResults() async {
     setState(() {
       _isLoading = true;
     });
-
-    // Then we try to get the Api datas
     try {
-      // Making the request and save it in a temporary variable
-      var news = await _apiController.getTopHeadlines();
-
-      // Then we set the state of our News class instance with the api datas.
-      setState(() {
-        _news = news;
-      });
+      var isUserExist = User.fromJson(await SharedPrefUser().getUser());
+      if (isUserExist != null) {
+        setState(() {
+          _user = isUserExist;
+          _categorySelected = _user.listTopics[0];
+        });
+      }
+      await _fetchCategoryHeadlines();
     } catch(err) {
-      // Error managing here.
       setState(() {
-        _news = null;
+        _user = User();
+        _categorySelected = "general";
       });
-    } finally {
-      // Finally we stop the loading icon.
+      await _fetchCategoryHeadlines();
+    }finally {
       setState(() {
         _isLoading = false;
       });
     }
-
   }
 
+  _fetchCategoryHeadlines() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      var news = await _api.getCategoryHeadlines(_user.country, _categorySelected);
+      setState(() {
+        _news = news;
+      });
+
+    } catch(err) {
+      setState(() {
+        _news = null;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  BoxDecoration _selectedTopic() {
+    return BoxDecoration(
+        border: Border(
+            bottom: BorderSide(
+                color: Theme
+                    .of(context)
+                    .accentColor,
+                width: 1.5
+            )
+        )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading ? Center(child: CircularProgressIndicator()) : Scaffold(
+      body: Column(
+        children: [
+          Container(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _user.listTopics.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () async {
+                    setState(() {
+                      _isSelected = index;
+                      _categorySelected = _user.listTopics[index];
+                    });
+                    await _fetchCategoryHeadlines();
+                  },
+                  child: Container(
+                      width: 140,
+                      child: Center(child: Text("${_user.listTopics[index]}  ")),
+                      decoration: _isSelected == index ? _selectedTopic() : BoxDecoration()
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+              child: ListView.separated(
+                itemCount: _news.articles.length,
+                scrollDirection: Axis.vertical,
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 500,
+                    child: Center(
+                        child: ArticleCard(
+                            articles: _news.articles[index],
+                            index: index,
+                            user: _user
+                        )
+                    ),
+                  );
+                },
+              )
+          )
+        ],
+      ),
+    );
+  }
 }

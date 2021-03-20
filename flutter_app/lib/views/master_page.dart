@@ -23,7 +23,7 @@ class _MasterPageState extends State<MasterPage> {
   List<Widget> _widgets = <Widget>[
     HomePage(),
     CategoriesPage(),
-    FavoriteArtciles(),
+    FavoriteArticles(),
     ProfilPage()
   ];
 

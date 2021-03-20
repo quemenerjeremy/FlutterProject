@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:flutter_app/views/page_details.dart';
+import 'package:flutter_app/models/sharedUserData.dart';
 import 'package:flutter_app/models/articles.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/views/page_details.dart';
 
 // Un customWidget qui va nous permettre d'afficher des cartes contenant la preview de nos articles dans la HomePage pour avoir un code plus lisible.
 
 class ArticleCard extends StatefulWidget {
   final Articles articles;
   final int index;
+  User user;
 
-  ArticleCard({Key key, this.articles, this.index}) : super(key: key);
+  ArticleCard({Key key, this.articles, this.index, this.user}) : super(key: key);
 
   @override
   _ArticleCardState createState() => _ArticleCardState();
@@ -20,6 +23,7 @@ class _ArticleCardState extends State<ArticleCard> {
 
   IconData _isFavorite;
   MaterialColor _isFilled;
+  bool alreadyFav = false;
 
   @override
   void initState() {
@@ -29,14 +33,19 @@ class _ArticleCardState extends State<ArticleCard> {
     if (widget.articles.urlToImage == null) {
       widget.articles.urlToImage = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png";
     }
-    if (widget.articles.description == null) {
-      widget.articles.description = "No description for this article.";
+    if (widget.user.favArticles == null) {
+      widget.user.favArticles = [];
     }
-    if (widget.articles.title == null) {
-      widget.articles.title = "No title for this article.";
-    }
-    if (widget.articles.content == null) {
-      widget.articles.content = "No content for this article.";
+    else {
+      for (var i = 0; i < widget.user.favArticles.length; i++) {
+        if (widget.user.favArticles[i].title == widget.articles.title) {
+          setState(() {
+            _isFavorite = Icons.favorite;
+            _isFilled = Colors.red;
+            alreadyFav = true;
+          });
+        }
+      }
     }
   }
 
@@ -55,7 +64,6 @@ class _ArticleCardState extends State<ArticleCard> {
               children: <Widget>[
                 InkWell(
                     onTap: () {
-                      print("Tap at index : ${widget.index}");
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PageDetails(articles: widget.articles, isFavorite: _isFavorite, isFilled: _isFilled,)));
                     },
                     child: Container(
@@ -65,11 +73,14 @@ class _ArticleCardState extends State<ArticleCard> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text("${widget.articles.title}", textAlign: TextAlign.center,style: TextStyle(fontSize: 17, color: Theme.of(context).accentColor)),
-                          ClipRRect(borderRadius: BorderRadius.circular(8.0), child: Image(image: NetworkImage(widget.articles.urlToImage), height: 200)),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: Text("${widget.articles.description}", maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.left,style: TextStyle(fontSize: 13)),
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text("${widget.articles.title}", textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, maxLines: 3,style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).accentColor)),
+                          ),
+                          Image(image: NetworkImage(widget.articles.urlToImage), height: 200, width: 400,),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text("${widget.articles.description}", textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, maxLines: 4, style: TextStyle(fontSize: 11)),
                           )
                         ],
                       ),
@@ -87,7 +98,7 @@ class _ArticleCardState extends State<ArticleCard> {
                                 icon: Icon(_isFavorite),
                                 iconSize: 30,
                                 color: _isFilled,
-                                onPressed: () {
+                                onPressed: () async {
                                   setState(() {
                                     if (_isFavorite != Icons.favorite) {
                                       _isFavorite = Icons.favorite;
@@ -97,6 +108,22 @@ class _ArticleCardState extends State<ArticleCard> {
                                       _isFilled = Colors.grey;
                                     }
                                   });
+                                  if (!alreadyFav && _isFavorite != Icons.favorite) {
+                                    widget.user.favArticles.add(
+                                        widget.articles);
+                                    await SharedPrefUser().saveUser(
+                                        widget.user);
+                                  }
+                                  else {
+                                    for (var i = 0; i < widget.user.favArticles.length; i++) {
+                                      if (widget.user.favArticles[i].title == widget.articles.title) {
+                                        print("remove at ${i}");
+                                        widget.user.favArticles.removeAt(i);
+                                      }
+                                    }
+                                    await SharedPrefUser().saveUser(
+                                        widget.user);
+                                  }
                                 }
                             ),
                             Text("${Jiffy(widget.articles.date).fromNow()}")

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/UserData.dart';
+import 'package:flutter_app/models/user.dart';
 
 enum CountryList {fr, us, gb, be, de}
 
