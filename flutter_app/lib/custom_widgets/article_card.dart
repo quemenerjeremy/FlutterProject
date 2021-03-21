@@ -108,11 +108,12 @@ class _ArticleCardState extends State<ArticleCard> {
                                       _isFilled = Colors.grey;
                                     }
                                   });
-                                  if (!alreadyFav && _isFavorite != Icons.favorite) {
+                                  if (!alreadyFav && _isFavorite == Icons.favorite) {
                                     widget.user.favArticles.add(
                                         widget.articles);
                                     await SharedPrefUser().saveUser(
                                         widget.user);
+
                                   }
                                   else {
                                     for (var i = 0; i < widget.user.favArticles.length; i++) {
