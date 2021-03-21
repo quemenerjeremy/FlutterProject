@@ -23,7 +23,7 @@ class _MasterPageState extends State<MasterPage> {
   List<Widget> _widgets = <Widget>[
     HomePage(),
     CategoriesPage(),
-    FavoriteArtciles(),
+    FavoriteArticles(),
     ProfilPage()
   ];
 
@@ -35,7 +35,7 @@ class _MasterPageState extends State<MasterPage> {
         _currentTitle = "Top Headlines";
         break;
       case 1:
-        _currentTitle = "Favorite Categories";
+        _currentTitle = "Categories";
         break;
       case 2:
         _currentTitle = "Favorite Articles";
@@ -48,19 +48,6 @@ class _MasterPageState extends State<MasterPage> {
     setState(() {});
   }
 
-  // Small function to display and remove the return arrow of our leader in the header.
-  IconButton _leadingButton() {
-    if (_index != 0)
-      return  IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          onPressItem(0);
-        },
-      );
-    else
-      return null;
-  }
-
   // Building widget
   @override
   Widget build(BuildContext context) {
@@ -68,7 +55,6 @@ class _MasterPageState extends State<MasterPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: _leadingButton(),
         title: Text(
           _currentTitle,
           style: TextStyle(fontSize: 25, color: Theme.of(context).accentColor),

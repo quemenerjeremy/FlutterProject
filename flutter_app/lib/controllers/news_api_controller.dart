@@ -3,22 +3,23 @@ import 'dart:convert';
 import 'package:flutter_app/network/news_api_calls.dart';
 import 'package:flutter_app/models/news.dart';
 
-// Some constant strings to make our api calls
 const String URL_EVERYTHING = "http://newsapi.org/v2/everything?";
 const String URL_TOP_HEADLINES = "http://newsapi.org/v2/top-headlines?";
 const String COUNTRY = "country=fr&";
 const String API_KEY = "apiKey=36cb3a17beaa4169bb99ff9fc8118563";
 
-
-// Our controller class for api calls. The controller will make the http request and send the answer to our models.
+// Notre classe controller pour les calls api. Le controller va faire la requete http et renvoyer la réponse à nos modèles
 
 class NewsApiController {
 
-  // Future-type function to retrieve and send the current headlines to our News model.
-  Future<News> getTopHeadlines() async {
-    var response = await NewsApiCalls().get(URL_TOP_HEADLINES + COUNTRY + API_KEY);
+  // Funtion pour récupérer et envoyer les gros titres du moment, à notre modèle News.
+  Future<News> getTopHeadlines(String country) async {
+    var response = await NewsApiCalls().get(URL_TOP_HEADLINES + "country=${country}&" + API_KEY);
+    return News.fromJson(jsonDecode(response));
+  }
 
-    // We extract and decode the Json response to make it usable by Flutter.
+  Future<News> getCategoryHeadlines(String country, String category) async {
+    var response = await NewsApiCalls().get(URL_TOP_HEADLINES + "country=${country}&" + "category=${category}&" + API_KEY);
     return News.fromJson(jsonDecode(response));
   }
 

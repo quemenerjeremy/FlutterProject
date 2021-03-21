@@ -9,7 +9,7 @@ import '../controllers/save_picture.dart';
 import 'package:flutter_app/views/SelectFavCategorie.dart';
 import 'package:flutter_app/views/selectCountry.dart';
 import 'package:flutter_app/custom_widgets/SwitchAppTheme.dart';
-import 'package:flutter_app/models/userData.dart';
+import 'package:flutter_app/models/user.dart';
 
 class ProfilPage extends StatefulWidget {
 
@@ -19,7 +19,7 @@ class ProfilPage extends StatefulWidget {
 }
 
 class _ProfilPageState extends State<ProfilPage> {
-  UserData _user;
+  User _user;
   bool _isLoading = false;
   Image image;
 
@@ -60,7 +60,7 @@ class _ProfilPageState extends State<ProfilPage> {
       _isLoading = true;
     });
     try {
-      var isUserExist = UserData.fromJson(await SharedPrefUser().getUser());
+      var isUserExist = User.fromJson(await SharedPrefUser().getUser());
       if (isUserExist != null) {
         setState(() {
           _user = isUserExist;
@@ -69,7 +69,7 @@ class _ProfilPageState extends State<ProfilPage> {
     } catch(err) {
       setState(() {
         print(err);
-        _user = UserData();
+        _user = User();
       });
     }finally {
       setState(() {
