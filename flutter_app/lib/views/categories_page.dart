@@ -36,6 +36,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
       if (isUserExist != null) {
         setState(() {
           _user = isUserExist;
+          if (_user.listTopics.length <= 0) {
+            _user.listTopics.add("general");
+          }
           _categorySelected = _user.listTopics[0];
         });
       }

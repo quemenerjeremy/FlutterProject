@@ -14,13 +14,13 @@ class FavCategories extends StatefulWidget {
 
 class _FavCategoriesState extends State<FavCategories> {
   List<String> categoryTitles = [
-    "Business",
-    "Entertainement",
-    "General",
-    "Health",
-    "Science",
-    "Sports",
-    "Technology"
+    "business",
+    "entertainement",
+    "general",
+    "health",
+    "science",
+    "sports",
+    "technology"
   ];
   var check = List<bool>.filled(7, false);
   List<String> chooseTopic = [];
@@ -73,8 +73,9 @@ class _FavCategoriesState extends State<FavCategories> {
                             value: check[index],
                             onChanged: (bool value) {
                               setState(() {
-                                if (check[index] == false)
+                                if (check[index] == false) {
                                   chooseTopic.add(categoryTitles[index]);
+                                }
                                 else
                                   chooseTopic.remove(categoryTitles[index]);
                                 check[index] = value;
